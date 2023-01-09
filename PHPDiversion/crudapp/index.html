@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="submitions">
+            <!-- Create Table First -->
+            <form action="create_table.php" method="post">
+                <!-- <input type="text" name="table_name" placeholder="Enter Table Name"> -->
+                <input type="submit" name="create_table_button" value="Create Table">
+            </form>
+        
+            <!-- Creating Items -->
+            <form action="create_file.php" method="post">
+                <input type="text" name="Filename" placeholder="Filename">
+                <input type="text" name="Content" placeholder="Content">
+                <input type="text" name="Owner" placeholder="Owner">
+                <input type="number" name="UID" placeholder="User ID">
+                <button type="submit" name="submit_file"> Create File </button>
+            </form>
+    
+            <form class="Edit" action="edit_item.php" method="post">
+                <input type="text" name="id" placeholder="ID" readonly>
+                <input type="text" name="Filename" placeholder="Filename">
+                <input type="text" name="Content" placeholder="Content">
+                <input type="text" name="Owner" placeholder="Owner">
+                <input type="number" name="UID" placeholder="User ID">
+                <button type="submit" name="submit_file"> Edit File </button>
+            </form>
+        </div>
+
+        <!-- List of Items -->
+        <div class="list-items"></div>
+
+
+    </div>
+
+    <script>
+        
+        function updateList() {
+            fetch('get_items.php')
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('.list-items').innerHTML = data;
+            });
+        }
+
+        function deleteItem(id) {
+            fetch(`delete_item.php?id=${id}`)
+            .then(response => response.text())
+            .then(data => {
+                updateList();
+            });
+        }
+
+        function editItem(id, Filename, Content, Owner, UID) {
+            document.querySelector('.Edit input[name="id"]').value = id;
+            document.querySelector('.Edit input[name="Filename"]').value = Filename;
+            document.querySelector('.Edit input[name="Content"]').value = Content;
+            document.querySelector('.Edit input[name="Owner"]').value = Owner;
+            document.querySelector('.Edit input[name="UID"]').value = UID;
+        }
+        window.addEventListener('load', updateList);
+
+    </script>
+    
+</body>
+</html>
+<!-- C:\Full Stack Development Files\ReactJS\PHPDiversion\crudapp -->

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="tableSuccess"></div>
+        <div class="submitions">
+            <!-- Create Table First -->
+            <form action="./table/create_table.php" method="post">
+                <input type="text" name="table_name" placeholder="Enter Table Name">
+                <input type="submit" name="create_table_button" value="Create Table">
+            </form>
+            <!-- Creating Items -->
+            <form action="./process/create_file_in_a_table.php" method="post">
+                <input type="text" name="table_name" placeholder="Table Name">
+                <input type="text" name="name" placeholder="Name">
+                <input type="text" name="age" placeholder="Age">
+                <input type="text" name="height" placeholder="Height">
+                <button type="submit" name="submit_file"> Create File In A Certain Table </button>
+            </form>
+    
+            <form class="Edit" action="edit_item.php" method="post">
+                <input type="text" name="id" placeholder="ID" readonly>
+                <input type="text" name="table_name" placeholder="Table Name">
+                <input type="text" name="name" placeholder="Name">
+                <input type="text" name="age" placeholder="Age">
+                <input type="text" name="height" placeholder="Height">
+                <button type="submit" name="submit_file"> Edit File </button>
+            </form>
+        </div>
+
+        <!-- List of Items -->
+        <div class="list-items-tables">
+
+        </div>
+
+
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const createTableResult = urlParams.get('create_table');
+
+        if (createTableResult == "success") {
+            document.querySelector('.tableSuccess').innerHTML = "<p class='success'> Table Has Been Created!</p>";
+            // display success message
+        } else if (createTableResult == "error") {
+            document.querySelector('.tableSuccess').innerHTML = "<p class='error'> Table Has Been Created!</p>";
+            // display error message
+        }
+
+        const parent_html = document.querySelector('.list-items-tables'); 
+        window.onload = function() {
+        // Send an HTTP request to the server to retrieve the data
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', './process/get_items_per_table.php');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Parse the JSON data
+                    var data = JSON.parse(xhr.responseText);
+                    // Iterate through the table names and data
+                    for (const table_name in data) {
+                        // Output the table name
+                        console.log(data[table_name]);
+                        var tableHtml = "<div class='table-name'>" + table_name;
+                        
+                        // Iterate through the data for this table and output each row
+                        tableHtml += "<div class='list-items'>";
+                        data[table_name].forEach(function(row) {
+                            tableHtml += "<div class='items' data-id='" + row["id"] + "'>";
+                            tableHtml += "<div class='item'>" + row["id"] + "</div>";
+                            tableHtml += "<div class='item'>" + row["name"] + "</div>";
+                            tableHtml += "<div class='item'>" + row["age"] + "</div>";
+                            tableHtml += "<div class='item'>" + row["height"] + "</div>";
+                            tableHtml += "</div>";
+                        });
+                        tableHtml += "</div>";
+                        parent_html.innerHTML += tableHtml;
+                    }
+                } else {
+                    console.error(xhr.responseText);
+                }
+            };
+            xhr.send();
+        };
+
+    </script>
+</body>
+</html>
